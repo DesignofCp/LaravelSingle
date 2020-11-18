@@ -1,33 +1,21 @@
 name: LaravelSingle Build
-
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: push
 
 jobs:
-  build-js:
-   name: Build JS
+  phpunit:
     runs-on: ubuntu-latest
-    container: laravelSingle/laravel-cli:7.3
+
     steps:
-       - uses: actions/checkout@v2
-       - run: yarn run production  
-       - name: Configure application
-  build-php:
-    name: Build PHP
-    runs-on: ubuntu-latest
-    container: laravelSingle/laravel-cli:7.3
-    steps:
-    - uses: actions/checkout@v2
-    - run: composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts 
-    - run: ./vendor/bin/phpcs --standard=./phpcs.xml --extensions=php app
-    - run: yarn install
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+
+    - name: Composer dependencies
+      run: composer install --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
+
+    - name: Prepare Laravel Application
       run: |
-         cp .env.example .env
-         php artisan cache:clear
-         php artisan config:clear
-         php artisan key:generate
-    - run: ./vendor/bin/phpunit --coverage-text --colors=never   
-      
+        cp .env.example .env
+        php artisan key:generate
+    - name: Run Testsuite
+      run: vendor/bin/phpunit tests/  
