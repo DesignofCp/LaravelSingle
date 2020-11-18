@@ -1,0 +1,33 @@
+name: LaravelSingle Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-js:
+   name: Build JS
+    runs-on: ubuntu-latest
+    container: laravelSingle/laravel-cli:7.3
+    steps:
+       - uses: actions/checkout@v2
+       - run: yarn run production  
+       - name: Configure application
+  build-php:
+    name: Build PHP
+    runs-on: ubuntu-latest
+    container: laravelSingle/laravel-cli:7.3
+    steps:
+    - uses: actions/checkout@v2
+    - run: composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts 
+    - run: ./vendor/bin/phpcs --standard=./phpcs.xml --extensions=php app
+    - run: yarn install
+      run: |
+         cp .env.example .env
+         php artisan cache:clear
+         php artisan config:clear
+         php artisan key:generate
+    - run: ./vendor/bin/phpunit --coverage-text --colors=never   
+      
