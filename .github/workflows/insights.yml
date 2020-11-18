@@ -15,6 +15,6 @@ jobs:
       run: composer install --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
 
     - name: phpinsights
-      uses: DesignofCp/laravel-phpinsights-action@v1.0.0
+      uses: DesignofCp/laravelsingle-phpinsights-action@v1.0.0
       with:
         args: -v --min-quality=80 --min-complexity=80 --min-architecture=80 --min-style=80
